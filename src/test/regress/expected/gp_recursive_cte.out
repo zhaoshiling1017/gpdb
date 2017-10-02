@@ -13,7 +13,7 @@ with recursive r(i) as (
    select i + 1 from r
 )
 select * from recursive_table_1 where recursive_table_1.id IN (select * from r limit 10);
- id 
+ id
 ----
   1
   2
@@ -26,7 +26,7 @@ with recursive r(i) as (
    select i + 1 from r
 )
 select * from recursive_table_1 where recursive_table_1.id NOT IN (select * from r limit 10);
- id  
+ id
 -----
  100
 (1 row)
@@ -38,7 +38,7 @@ with recursive r(i) as (
    select i + 1 from r
 )
 select * from recursive_table_1 where EXISTS (select * from r limit 10);
- id  
+ id
 -----
    1
    2
@@ -52,7 +52,7 @@ with recursive r(i) as (
    select i + 1 from r
 )
 select * from recursive_table_1 where NOT EXISTS (select * from r limit 10);
- id 
+ id
 ----
 (0 rows)
 
@@ -65,7 +65,7 @@ with recursive r(i) as (
 	select r.i + 1 from r, recursive_table_2 where r.i = recursive_table_2.id
 )
 select recursive_table_1.id from recursive_table_1, recursive_table_2 where recursive_table_1.id IN (select * from r where r.i = recursive_table_2.id);
- id 
+ id
 ----
 (0 rows)
 
@@ -76,7 +76,7 @@ with recursive r(i) as (
 	select r.i + 1 from r, recursive_table_2 where r.i = recursive_table_2.id
 )
 select recursive_table_1.id from recursive_table_1, recursive_table_2 where recursive_table_1.id NOT IN (select * from r where r.i = recursive_table_2.id);
- id  
+ id
 -----
    1
    1
@@ -96,7 +96,7 @@ with recursive r(i) as (
 	select r.i + 1 from r, recursive_table_2 where r.i = recursive_table_2.id
 )
 select recursive_table_1.id from recursive_table_1, recursive_table_2 where recursive_table_1.id = recursive_table_2.id and EXISTS (select * from r where r.i = recursive_table_2.id);
- id 
+ id
 ----
 (0 rows)
 
@@ -107,7 +107,7 @@ with recursive r(i) as (
 	select r.i + 1 from r, recursive_table_2 where r.i = recursive_table_2.id
 )
 select recursive_table_1.id from recursive_table_1, recursive_table_2 where recursive_table_1.id = recursive_table_2.id and NOT EXISTS (select * from r where r.i = recursive_table_2.id);
- id 
+ id
 ----
 (0 rows)
 
@@ -118,10 +118,206 @@ with recursive r(i) as (
    select i + 1 from r
 )
 select * from recursive_table_1 where recursive_table_1.id >= (select i from r limit 1) order by recursive_table_1.id;
- id  
+ id
 -----
    1
    2
  100
 (3 rows)
+
+-- WITH RECURSIVE ref used within an EXISTS subquery in another recursive CTE
+with recursive
+r(i) as (
+    select 1
+    union all
+    select r.i + 1 from r, recursive_table_2 where i = recursive_table_2.id
+),
+y(i) as (
+    select 1
+    union all
+    select i + 1 from y, recursive_table_1 where i = recursive_table_1.id and EXISTS (select * from r limit 10)
+)
+select * from y limit 10;
+ i
+---
+ 1
+ 2
+ 3
+(3 rows)
+
+-- WITH RECURSIVE ref used within a NOT EXISTS subquery in another recursive CTE
+with recursive
+r(i) as (
+    select 1
+    union all
+    select r.i + 1 from r, recursive_table_2 where i = recursive_table_2.id
+),
+y(i) as (
+    select 1
+    union all
+    select i + 1 from y, recursive_table_1 where i = recursive_table_1.id and NOT EXISTS (select * from r limit 10)
+)
+select * from y limit 10;
+ i
+---
+ 1
+(1 row)
+
+-- WITH RECURSIVE ref used within an IN subquery in a non-recursive CTE
+with recursive
+r(i) as (
+    select 1
+    union all
+    select r.i + 1 from r, recursive_table_2 where i = recursive_table_2.id
+),
+y as (
+    select * from recursive_table_1 where recursive_table_1.id IN (select * from r limit 10)
+)
+select * from y;
+ id
+----
+  1
+(1 row)
+
+-- WITH RECURSIVE ref used within a NOT IN subquery in a non-recursive CTE
+with recursive
+r(i) as (
+    select 1
+    union all
+    select r.i + 1 from r, recursive_table_2 where i = recursive_table_2.id
+),
+y as (
+    select * from recursive_table_1 where recursive_table_1.id NOT IN (select * from r limit 10)
+)
+select * from y;
+ id
+-----
+   2
+ 100
+(2 rows)
+
+-- WITH RECURSIVE ref used within an EXISTS subquery in a non-recursive CTE
+with recursive
+r(i) as (
+    select 1
+    union all
+    select r.i + 1 from r, recursive_table_2 where i = recursive_table_2.id
+),
+y as (
+    select * from recursive_table_1 where EXISTS (select * from r limit 10)
+)
+select * from y;
+ id
+-----
+   1
+   2
+ 100
+(3 rows)
+
+-- WITH RECURSIVE ref used within a NOT EXISTS subquery in a non-recursive CTE
+with recursive
+r(i) as (
+    select 1
+    union all
+    select r.i + 1 from r, recursive_table_2 where i = recursive_table_2.id
+),
+y as (
+    select * from recursive_table_1 where NOT EXISTS (select * from r limit 10)
+)
+select * from y;
+ id
+----
+(0 rows)
+
+-- WITH RECURSIVE non-recursive ref used within an EXISTS subquery in a recursive CTE
+with recursive
+r as (
+    select * from recursive_table_2
+),
+y(i) as (
+    select 1
+    union all
+    select i + 1 from y, recursive_table_1 where i = recursive_table_1.id and EXISTS (select * from r)
+)
+select * from y limit 10;
+ i
+---
+ 1
+ 2
+ 3
+(3 rows)
+
+-- WITH RECURSIVE non-recursive ref used within a NOT EXISTS subquery in a recursive CTE
+with recursive
+r as (
+    select * from recursive_table_2
+),
+y(i) as (
+    select 1
+    union all
+    select i + 1 from y, recursive_table_1 where i = recursive_table_1.id and NOT EXISTS (select * from r)
+)
+select * from y limit 10;
+ i
+---
+ 1
+(1 row)
+
+-- WITH ref used within an IN subquery in another CTE
+with
+r as (
+    select * from recursive_table_2 where id < 21
+),
+y as (
+    select * from recursive_table_1 where id IN (select * from r)
+)
+select * from y;
+ id
+----
+(0 rows)
+
+-- WITH ref used within a NOT IN subquery in another CTE
+with
+r as (
+    select * from recursive_table_2 where id < 21
+),
+y as (
+    select * from recursive_table_1 where id NOT IN (select * from r)
+)
+select * from y;
+ id
+-----
+   1
+   2
+ 100
+(3 rows)
+
+-- WITH ref used within an EXISTS subquery in another CTE
+with
+r as (
+    select * from recursive_table_2 where id < 21
+),
+y as (
+    select * from recursive_table_1 where EXISTS (select * from r)
+)
+select * from y;
+ id
+-----
+   1
+   2
+ 100
+(3 rows)
+
+-- WITH ref used within a NOT EXISTS subquery in another CTE
+with
+r as (
+    select * from recursive_table_2 where id < 21
+),
+y as (
+    select * from recursive_table_1 where NOT EXISTS (select * from r)
+)
+select * from y;
+ id
+----
+(0 rows)
 

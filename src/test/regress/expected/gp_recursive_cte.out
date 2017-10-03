@@ -111,3 +111,17 @@ select recursive_table_1.id from recursive_table_1, recursive_table_2 where recu
 ----
 (0 rows)
 
+-- WITH RECURSIVE ref used within a Expression sublink
+with recursive r(i) as (
+   select 1
+   union all
+   select i + 1 from r
+)
+select * from recursive_table_1 where recursive_table_1.id >= (select i from r limit 1) order by recursive_table_1.id;
+ id  
+-----
+   1
+   2
+ 100
+(3 rows)
+

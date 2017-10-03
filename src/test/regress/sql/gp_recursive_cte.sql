@@ -80,3 +80,11 @@ with recursive r(i) as (
 	select r.i + 1 from r, recursive_table_2 where r.i = recursive_table_2.id
 )
 select recursive_table_1.id from recursive_table_1, recursive_table_2 where recursive_table_1.id = recursive_table_2.id and NOT EXISTS (select * from r where r.i = recursive_table_2.id);
+
+-- WITH RECURSIVE ref used within a Expression sublink
+with recursive r(i) as (
+   select 1
+   union all
+   select i + 1 from r
+)
+select * from recursive_table_1 where recursive_table_1.id >= (select i from r limit 1) order by recursive_table_1.id;

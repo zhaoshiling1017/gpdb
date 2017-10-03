@@ -225,3 +225,14 @@ y as (
     select * from recursive_table_1 where NOT EXISTS (select * from r)
 )
 select * from y;
+
+create table recursive_table_3(id int, a int);
+insert into recursive_table_3 values (1, 2), (2, 3);
+-- WITH RECURSIVE ref used within a window function
+with recursive r(i, j) as (
+	select * from recursive_table_3
+	union all
+	select i + 1, j from r, recursive_table_3 where r.i < recursive_table_3.id
+)
+select avg(i) over(partition by j) from r limit 100;
+

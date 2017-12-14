@@ -10273,7 +10273,6 @@ static void
 ATExecSetTableSpace_AppendOnly(
 	Oid				tableOid,
 	Relation		rel,
-	Relation		gp_relation_node,
 	RelFileNode		*newRelFileNode)
 {
 	// WALREP_FIXME: rewrite this without gp_relation_node
@@ -10508,7 +10507,6 @@ ATExecSetTableSpace_Relation(Oid tableOid, Oid newTableSpace)
 	Oid			newrelfilenode;
 	HeapTuple	tuple;
 	Form_pg_class rd_rel;
-	Relation	gp_relation_node;
 	RelFileNode newrnode;
 
 	rel = relation_open(tableOid, AccessExclusiveLock);
@@ -10574,8 +10572,6 @@ ATExecSetTableSpace_Relation(Oid tableOid, Oid newTableSpace)
 	newrelfilenode = GetNewRelFileNode(newTableSpace,
 									   rel->rd_rel->relisshared);
 
-	gp_relation_node = heap_open(GpRelationNodeRelationId, RowExclusiveLock);
-
 	/* Open old and new relation */
 	newrnode = rel->rd_node;
 	newrnode.relNode = newrelfilenode;
@@ -10594,7 +10590,6 @@ ATExecSetTableSpace_Relation(Oid tableOid, Oid newTableSpace)
 		ATExecSetTableSpace_AppendOnly(
 								tableOid,
 								rel, 
-								gp_relation_node, 
 								&newrnode);
 	else
 		ATExecSetTableSpace_BufferPool(
@@ -10604,8 +10599,6 @@ ATExecSetTableSpace_Relation(Oid tableOid, Oid newTableSpace)
 
 
 	heap_close(pg_class, RowExclusiveLock);
-
-	heap_close(gp_relation_node, RowExclusiveLock);
 
 	/* Make sure the reltablespace change is visible */
 	CommandCounterIncrement();

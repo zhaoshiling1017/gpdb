@@ -185,46 +185,8 @@ FaultInjectorIdentifierEnumToString[] = {
 		/* inject fault during transaction start with DistributedTransactionContext in ENTRY_DB_SINGLETON mode */
 	_("transaction_abort_after_distributed_prepared"),
 		/* inject fault after transaction is prepared */
-	_("transaction_commit_pass1_from_create_pending_to_created"),
-		/* inject fault after persistent state change is permanently stored during first pass */
-	_("transaction_commit_pass1_from_drop_in_memory_to_drop_pending"),
-		/* inject fault after persistent state change is permanently stored during first pass */
-	_("transaction_commit_pass1_from_aborting_create_needed_to_aborting_create"),
-		/* inject fault after persistent state change is permanently stored during first pass */
-	_("transaction_abort_pass1_from_create_pending_to_aborting_create"),
-		/* inject fault after persistent state change is permanently stored during first pass */
-	_("transaction_abort_pass1_from_aborting_create_needed_to_aborting_create"),
-		/* inject fault after persistent state change is permanently stored during first pass */
-	_("transaction_commit_pass2_from_drop_in_memory_to_drop_pending"),
-		/* inject fault after physical drop and before final persistent state change is permanently stored during second pass */
-	_("transaction_commit_pass2_from_aborting_create_needed_to_aborting_create"),
-		/* inject fault after physical drop and before final persistent state change is permanently stored during second pass */
-	_("transaction_abort_pass2_from_create_pending_to_aborting_create"),
-		/* inject fault after physical drop and before final persistent state change is permanently stored during second pass */
-	_("transaction_abort_pass2_from_aborting_create_needed_to_aborting_create"),
-		/* inject fault after physical drop and before final persistent state change is permanently stored during second pass */
-	_("finish_prepared_transaction_commit_pass1_from_create_pending_to_created"),
-		/* inject fault after persistent state change is permanently stored during first pass */
-	_("finish_prepared_transaction_commit_pass2_from_create_pending_to_created"),
-		/* inject fault after physical drop and before final persistent state change is permanently stored during second pass */
-	_("finish_prepared_transaction_abort_pass1_from_create_pending_to_aborting_create"),
-		/* inject fault after persistent state change is permanently stored during first pass */
-	_("finish_prepared_transaction_abort_pass2_from_create_pending_to_aborting_create"),
-		/* inject fault after physical drop and before final persistent state change is permanently stored during second pass */
-	_("finish_prepared_transaction_commit_pass1_from_drop_in_memory_to_drop_pending"),
-		/* inject fault after persistent state change is permanently stored during first pass */
-	_("finish_prepared_transaction_commit_pass2_from_drop_in_memory_to_drop_pending"),
-		/* inject fault after physical drop and before final persistent state change is permanently stored during second pass */
-	_("finish_prepared_transaction_commit_pass1_aborting_create_needed"),
-		/* inject fault after persistent state change is permanently stored during first pass */
-	_("finish_prepared_transaction_commit_pass2_aborting_create_needed"),
-		/* inject fault after physical drop and before final persistent state change is permanently stored during second pass */
-	_("finish_prepared_transaction_abort_pass1_aborting_create_needed"),
-		/* inject fault after persistent state change is permanently stored during first pass */
-	_("finish_prepared_transaction_abort_pass2_aborting_create_needed"),
-		/* inject fault after physical drop and before final persistent state change is permanently stored during second pass */
-	_("filerep_verification"),
-	    /* inject fault to start verification */
+	_("onephase_transaction_commit"),
+		/* inject fault before transaction commit is recorded in xlog */
 	_("twophase_transaction_commit_prepared"),
 		/* inject fault before transaction commit is recorded in xlog */
 	_("twophase_transaction_abort_prepared"),
@@ -1006,22 +968,6 @@ FaultInjector_NewHashEntry(
 			case FsyncCounter:
 			case BgBufferSyncDefaultLogic:
 			case ChangeTrackingDisable:
-			case FileRepVerification:
-
-			case FinishPreparedTransactionCommitPass1FromCreatePendingToCreated:
-			case FinishPreparedTransactionCommitPass2FromCreatePendingToCreated:
-				
-			case FinishPreparedTransactionCommitPass1FromDropInMemoryToDropPending:
-			case FinishPreparedTransactionCommitPass2FromDropInMemoryToDropPending:
-				
-			case FinishPreparedTransactionCommitPass1AbortingCreateNeeded:
-			case FinishPreparedTransactionCommitPass2AbortingCreateNeeded:
-
-			case FinishPreparedTransactionAbortPass1FromCreatePendingToAbortingCreate:
-			case FinishPreparedTransactionAbortPass2FromCreatePendingToAbortingCreate:
-				
-			case FinishPreparedTransactionAbortPass1AbortingCreateNeeded:
-			case FinishPreparedTransactionAbortPass2AbortingCreateNeeded:
 
 			case InterconnectStopAckIsLost:
 			case SendQEDetailsInitBackend:

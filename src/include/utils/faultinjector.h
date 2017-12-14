@@ -92,53 +92,9 @@ typedef enum FaultInjectorIdentifier_e {
 	TransactionStartUnderEntryDbSingleton,
 
 	TransactionAbortAfterDistributedPrepared,
-	
-	TransactionCommitPass1FromCreatePendingToCreated,
-	
-	TransactionCommitPass1FromDropInMemoryToDropPending,
-	
-	TransactionCommitPass1FromAbortingCreateNeededToAbortingCreate,
-	
-	TransactionAbortPass1FromCreatePendingToAbortingCreate,
-	
-	TransactionAbortPass1FromAbortingCreateNeededToAbortingCreate,
-	
-	TransactionCommitPass2FromDropInMemoryToDropPending,
-	
-	TransactionCommitPass2FromAbortingCreateNeededToAbortingCreate,
-	
-	TransactionAbortPass2FromCreatePendingToAbortingCreate,
-	
-	TransactionAbortPass2FromAbortingCreateNeededToAbortingCreate,
-	
-	
-	FinishPreparedTransactionCommitPass1FromCreatePendingToCreated,
-	
-	FinishPreparedTransactionCommitPass2FromCreatePendingToCreated,
-		/* commit: create pending => created */
-			
-	FinishPreparedTransactionAbortPass1FromCreatePendingToAbortingCreate,
-	FinishPreparedTransactionAbortPass2FromCreatePendingToAbortingCreate,
-		/* abort: create pending => aborting create */
 
-	FinishPreparedTransactionCommitPass1FromDropInMemoryToDropPending,
-	
-	FinishPreparedTransactionCommitPass2FromDropInMemoryToDropPending,
-		/* commit: drop in memory => drop pending */
+	OnePhaseTransactionCommit,
 
-	FinishPreparedTransactionCommitPass1AbortingCreateNeeded,
-	
-	FinishPreparedTransactionCommitPass2AbortingCreateNeeded,
-		/* commit: create pending => created */
-	
-	FinishPreparedTransactionAbortPass1AbortingCreateNeeded,
-	
-	FinishPreparedTransactionAbortPass2AbortingCreateNeeded,	
-		/* abort: create pending => aborting create */
-
-	FileRepVerification,
-		/* trigger filerep verification for testing */
-	
 	TwoPhaseTransactionCommitPrepared,
 	
 	TwoPhaseTransactionAbortPrepared,

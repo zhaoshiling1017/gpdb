@@ -1508,7 +1508,7 @@ jobs:
       # platform is necessary to generate correct ssh config
       platform: sles12
     on_failure:
-      <<: *ccp_destroy
+      <<: *set_failed
   - task: run_tests
     tags: ["ccp"]
     file: gpdb_src/concourse/tasks/ic_gpdb_sles12.yml
@@ -1555,7 +1555,7 @@ jobs:
       # platform is necessary to generate correct ssh config
       platform: sles12
     on_failure:
-      <<: *ccp_destroy
+      <<: *set_failed
   - task: run_tests
     tags: ["ccp"]
     file: gpdb_src/concourse/tasks/ic_gpdb_sles12.yml

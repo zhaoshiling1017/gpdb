@@ -682,7 +682,7 @@ FtsWalRepSetupMessageContext(fts_context *context)
 	for (i = 0; i < context->num_primary_segments; i++)
 	{
 		probe_response_per_segment *response = &context->responses[i];
-		if (response->message == FTS_MSG_PROBE)
+		if (strcmp(response->message, FTS_MSG_PROBE) == 0)
 		{
 			response->message = NULL;
 			response->isScheduled = true;

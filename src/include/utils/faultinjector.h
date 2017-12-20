@@ -36,58 +36,8 @@ typedef enum FaultInjectorIdentifier_e {
 	PgXlog,
 	
 	StartPrepareTx,
-
-	FaultBeforePendingDeleteRelationEntry,
-
-	FaultBeforePendingDeleteDatabaseEntry,
-
-	FaultBeforePendingDeleteTablespaceEntry,
-
-	FaultBeforePendingDeleteFilespaceEntry,
-	
-	FileRepConsumer,
-	
-	FileRepConsumerVerification,
-
-	FileRepChangeTrackingCompacting,
-	
-	FileRepSender,
-	
-	FileRepReceiver,
-	
-	FileRepFlush,
-	
-	FileRepResync,
-	
-	FileRepResyncInProgress,	
-	
-	FileRepResyncWorker,
-	
-	FileRepResyncWorkerRead,
-	
-	FileRepTransitionToInResyncMirrorReCreate,
-	
-	FileRepTransitionToInResyncMarkReCreated,
-	
-	FileRepTransitionToInResyncMarkCompleted,
-	
-	FileRepTransitionToInSyncBegin,
-	
-	FileRepTransitionToInSync,
-	
-	FileRepTransitionToInSyncBeforeCheckpoint,
-	
-	FileRepTransitionToInSyncMarkCompleted,
-	
-	FileRepTransitionToChangeTracking,
-	FileRepIsOperationCompleted,
-	FileRepImmediateShutdownRequested,
 	
 	Checkpoint,
-	
-	ChangeTrackingCompactingReport,
-	
-	ChangeTrackingDisable,
 	
 	TransactionStartUnderEntryDbSingleton,
 
@@ -126,8 +76,6 @@ typedef enum FaultInjectorIdentifier_e {
 
 	ExecutorRunHighProcessed,
 
-	UpdateCommittedEofInPersistentTable,
-
 	MultiExecHashLargeVmem,
 
 	ExecSortBeforeSorting,
@@ -156,8 +104,6 @@ typedef enum FaultInjectorIdentifier_e {
 	VacuumFullAfterTruncate,
 	VacuumRelationEndOfFirstRound,
 	VacuumRelationOpenRelationDuringDropPhase,
-
-	RebuildPTDB,
 
 	ProcArray_Add,
 

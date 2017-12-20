@@ -120,67 +120,8 @@ FaultInjectorIdentifierEnumToString[] = {
 		/* inject fault when files in pg_xlog directory are written */
 	_("start_prepare"),
 		/* inject fault during start prepare */
-	_("fault_before_pending_delete_relation_entry"),
-		/* inject fault after adding entry to persistent relation table in CP state but before adding to Pending delete list */
-	_("fault_before_pending_delete_database_entry"),
-		/* inject fault after adding entry to persistent database table in CP state but before adding to Pending delete list */
-	_("fault_before_pending_delete_tablespace_entry"),
-		/* inject fault after adding entry to persistent tablespace table in CP state but before adding to Pending delete list */
-	_("fault_before_pending_delete_filespace_entry"),
-		/* inject fault after adding entry to persistent filespace table in CP state but before adding to Pending delete list */
-	_("filerep_consumer"),
-		/* 
-		 * inject fault before data are processed
-		 *		*) file operation is issued to file system (if mirror)
-		 *		*) file operation performed on mirror is acknowledged to backend processes (if primary)
-		 */
-	_("filerep_consumer_verification"),
-		/* inject fault before ack verification data are consumed on primary */
-	_("filerep_change_tracking_compacting"),
-		/* Ashwin - inject fault during compacting change tracking */
-	_("filerep_sender"),
-		/* inject fault before data are sent to network */
-	_("filerep_receiver"),
-		/* 
-		 * inject fault after data are received from the network and 
-		 * before data are made available for consuming 
-		 */
-	_("filerep_flush"),
-		/* inject fault before fsync is issued to file system */
-	_("filerep_resync"),
-		/* inject fault while InResync when first relations is inserted to be resynced */
-	_("filerep_resync_in_progress"),
-		/* inject fault while InResync when more then 10 relations in progress */
-	_("filerep_resync_worker"),
-		/* inject fault after write to mirror while all locks are still hold */
-	_("filerep_resync_worker_read"),
-		/* inject fault on read required for resync by resync worker process */
-	_("filerep_transition_to_resync"),
-		/* inject fault during transition to InResync before objects are re-created on mirror */
-	_("filerep_transition_to_resync_mark_recreate"),
-		/* inject fault during transition to InResync before objects are marked re-created */
-	_("filerep_transition_to_resync_mark_completed"),
-		/* inject fault during transition to InResync before transition is marked completed */
-	_("filerep_transition_to_sync_begin"),
-		/* inject fault before transition to InSync begin */
-	_("filerep_transition_to_sync"),
-		/* inject fault during transition to InSync */
-	_("filerep_transition_to_sync_before_checkpoint"),
-		/* inject fault during transition to InSync before checkpoint is taken */
-	_("filerep_transition_to_sync_mark_completed"),
-		/* inject fault during transition to InSync before transition is marked completed */
-	_("filerep_transition_to_change_tracking"),
-		/* inject fault during transition to Change Tracking */
-	_("fileRep_is_operation_completed"),
-		/* inject fault in FileRep Is Operation completed function */
-	_("filerep_immediate_shutdown_request"),
-		/* inject fault just before sending SIGQUIT to child flerep processes */
 	_("checkpoint"),
 		/* inject fault before checkpoint is taken */
-	_("change_tracking_compacting_report"),
-		/* report if compacting is in progress */
-	_("change_tracking_disable"),
-		/* inject fault during fsync to Change Tracking log */
 	_("transaction_start_under_entry_db_singleton"),
 		/* inject fault during transaction start with DistributedTransactionContext in ENTRY_DB_SINGLETON mode */
 	_("transaction_abort_after_distributed_prepared"),
@@ -221,8 +162,6 @@ FaultInjectorIdentifierEnumToString[] = {
 	  /* pretend that a query processed billions of rows  */
 	_("executor_run_high_processed"),
 	 /* inject fault before we close workfile in ExecHashJoinNewBatch */
-	_("update_committed_eof_in_persistent_table"),
-		/* inject fault before committed EOF is updated in gp_persistent_relation_node for Append Only segment files */
 	_("multi_exec_hash_large_vmem"),
 		/* large palloc inside MultiExecHash to attempt to exceed vmem limit */
 	_("execsort_before_sorting"),
@@ -265,8 +204,6 @@ FaultInjectorIdentifierEnumToString[] = {
 		/* inject fault at the end of first round of vacuumRelation loop */
 	_("vacuum_relation_open_relation_during_drop_phase"),
 		/* inject fault during the open relation of the drop phase of vacuumRelation loop */
-	_("rebuild_pt_db"),
-		/* inject fault while rebuilding persistent tables (for each db) */
 	_("procarray_add"),
 		/* inject fault while adding PGPROC to procarray */
 	_("exec_hashjoin_new_batch"),
@@ -656,8 +593,6 @@ FaultInjector_InjectFaultNameIfSet(
 					 errmsg("fault triggered, fault name:'%s' fault type:'%s' ",
 							entryLocal->faultName,
 							FaultInjectorTypeEnumToString[entryLocal->faultInjectorType])));
-			if (entryLocal->faultInjectorIdentifier == FileRepImmediateShutdownRequested)
-				cnt = entryLocal->sleepTime;
 
 			for (ii=0; ii < cnt; ii++)
 			{
@@ -665,11 +600,9 @@ FaultInjector_InjectFaultNameIfSet(
 				SegmentState_e segmentState;
 				getFileRepRoleAndState(NULL, &segmentState, NULL, NULL, NULL);
 
-				if ((entryLocal->faultInjectorIdentifier != FileRepImmediateShutdownRequested) &&
-					(segmentState == SegmentStateShutdownFilerepBackends ||
-					segmentState == SegmentStateImmediateShutdown ||
+				if (segmentState == SegmentStateImmediateShutdown ||
 					segmentState == SegmentStateShutdown ||
-					IsFtsShudownRequested()))
+					IsFtsShudownRequested())
 				{
 					break;
 				}
@@ -967,7 +900,6 @@ FaultInjector_NewHashEntry(
 			case Checkpoint:
 			case FsyncCounter:
 			case BgBufferSyncDefaultLogic:
-			case ChangeTrackingDisable:
 
 			case InterconnectStopAckIsLost:
 			case SendQEDetailsInitBackend:

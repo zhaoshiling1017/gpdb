@@ -689,7 +689,7 @@ FtsWalRepSetupMessageContext(fts_context *context)
 		}
 		else
 		{
-			Assert(response->message == FTS_MSG_SYNCREP_OFF);
+			Assert(strcmp(response->message, FTS_MSG_SYNCREP_OFF) == 0);
 			response->isScheduled = false;
 			response->result.isPrimaryAlive = false;
 			response->result.isInSync = false;

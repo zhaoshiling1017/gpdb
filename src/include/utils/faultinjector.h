@@ -21,220 +21,37 @@
  *
  */
 typedef enum FaultInjectorIdentifier_e {
-	FaultInjectorIdNotSpecified=0,
-	
-	FaultInjectorIdAll,
-		/* 
-		 * affects all faults injected
-		 *		*) remove all faults injected from the segment
-		 *		*) display status for all faults injected 
-		 */
-	Postmaster,
-	
-	PgControl,
-	
-	PgXlog,
-	
-	StartPrepareTx,
-	
-	Checkpoint,
-	
-	TransactionStartUnderEntryDbSingleton,
-
-	TransactionAbortAfterDistributedPrepared,
-
-	OnePhaseTransactionCommit,
-
-	TwoPhaseTransactionCommitPrepared,
-	
-	TwoPhaseTransactionAbortPrepared,
-	
-	DtmBroadcastPrepare,
-	
-	DtmBroadcastCommitPrepared,
-	
-	DtmBroadcastAbortPrepared,
-	
-	DtmXLogDistributedCommit,
-
-	DtmInit,
-	
-        EndPreparedTwoPhaseSleep,
-	       /* sleep after creating two phase files */
-
-	SegmentTransitionRequest,
-
-	SegmentProbeResponse,
-
-	LocalTmRecordTransactionCommit,
-	
-	MallocFailure,
-	AbortTransactionFail,
-	WorkfileCreationFail,
-	WorkfileWriteFail,
-	WorkfileHashJoinFailure,
-
-	ExecutorRunHighProcessed,
-
-	MultiExecHashLargeVmem,
-
-	ExecSortBeforeSorting,
-	ExecSortMKSortMergeRuns,
-	ExecShareInputNext,
-	BaseBackupPostCreateCheckpoint,
-
-	CompactionBeforeSegmentFileDropPhase,
-	CompactionBeforeCleanupPhase,
-
-	AppendOnlyInsert,
-	AppendOnlyDelete,
-	AppendOnlyUpdate,
-
-	ReindexDB,
-	ReindexRelation,
-
-	FaultDuringExecDynamicTableScan,
-
-	FaultInBackgroundWriterMain,
-
-	CdbCopyStartAfterDispatch,
-
-	RepairFragEnd,
-	VacuumFullBeforeTruncate,
-	VacuumFullAfterTruncate,
-	VacuumRelationEndOfFirstRound,
-	VacuumRelationOpenRelationDuringDropPhase,
-
-	ProcArray_Add,
-
-	FaultExecHashJoinNewBatch,
-
-	FtsWaitForShutdown,
-
-	RunawayCleanup,
-
-	OptRelcacheTranslatorCatalogAccess,
-
-	SendQEDetailsInitBackend,
-	ProcessStartupPacketFault,
-	QuickDie,
-	AfterOneSliceDispatched,
-
-	InterconnectStopAckIsLost,
-	QEGotSnapshotAndInterconnect,
-
-	FsyncCounter,
-	BgBufferSyncDefaultLogic,
-
-	FinishPreparedAfterRecordCommitPrepared,
-
-	GangCreated,
-
-	ResGroupAssignedOnMaster,
-
-	BeforeReadCommand,
-
-	/* INSERT has to be done before that line */
-	FaultInjectorIdMax,
-	
+#define FI_IDENT(id, str) id,
+#include "utils/faultinjector_lists.h"
+#undef FI_IDENT
+	FaultInjectorIdMax
 } FaultInjectorIdentifier_e;
 
-/*
- * NB: This list needs to be kept in sync with:
- * - FaultInjectorTypeEnumToString
- * - the help message in clsInjectFault.py
- */
 typedef enum FaultInjectorType_e {
-	FaultInjectorTypeNotSpecified=0,
-	
-	FaultInjectorTypeSleep,
-	
-	FaultInjectorTypeFault,
-	
-	FaultInjectorTypeFatal,
-	
-	FaultInjectorTypePanic,
-	
-	FaultInjectorTypeError,
-	
-	FaultInjectorTypeInfiniteLoop,
-	
-	FaultInjectorTypeDataCorruption,
-	
-	FaultInjectorTypeSuspend,
-	
-	FaultInjectorTypeResume,
-	
-	FaultInjectorTypeSkip,
-	
-	FaultInjectorTypeMemoryFull,
-	
-	FaultInjectorTypeReset,
-	
-	FaultInjectorTypeStatus,
-	
-	FaultInjectorTypeSegv,
-	
-	FaultInjectorTypeInterrupt,
-
-	FaultInjectorTypeFinishPending,
-
-	FaultInjectorTypeCheckpointAndPanic,
-
-	/* INSERT has to be done before that line */
-	FaultInjectorTypeMax,
-	
+#define FI_TYPE(id, str) id,
+#include "utils/faultinjector_lists.h"
+#undef FI_TYPE
+	FaultInjectorTypeMax
 } FaultInjectorType_e;
 
 /*
  *
  */
 typedef enum DDLStatement_e {
-	DDLNotSpecified=0,
-	
-	CreateDatabase,
-	DropDatabase,
-	
-	CreateTable,
-	DropTable,
-	
-	CreateIndex,
-	AlterIndex,
-	ReIndex,
-	DropIndex,
-	
-	CreateFilespaces,
-	DropFilespaces,
-	
-	CreateTablespaces,
-	DropTablespaces,
-	
-	Truncate,
-	
-	Vacuum,
-	
-	/* INSERT has to be done before that line */
-	DDLMax,
+#define FI_DDL_STATEMENT(id, str) id,
+#include "utils/faultinjector_lists.h"
+#undef FI_DDL_STATEMENT
+	DDLMax
 } DDLStatement_e;
 
 /*
  *
  */
 typedef enum FaultInjectorState_e {
-	FaultInjectorStateNotInitialized=0,
-		
-	FaultInjectorStateWaiting,
-		/* Request is waiting to be injected */
-	
-	FaultInjectorStateTriggered,
-		/* Fault is injected */
-	
-	FaultInjectorStateCompleted,
-		/* Fault was injected and completed successfully */
-	
-	FaultInjectorStateFailed,
-		/* Fault was NOT injected */
-	
+#define FI_STATE(id, str) id,
+#include "utils/faultinjector_lists.h"
+#undef FI_STATE
+	FaultInjectorStateMax
 } FaultInjectorState_e;
 
 

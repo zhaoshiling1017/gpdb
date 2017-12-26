@@ -218,7 +218,7 @@ PROCESS_QE () {
         START_QE "-w"
     fi
 
-    LOG_MSG "[INFO]:-[$INST_COUNT]-End Function $FUNCNAME"
+    LOG_MSG "[INFO][$INST_COUNT]:-End Function $FUNCNAME"
 }
 
 REGISTER_MIRROR() {

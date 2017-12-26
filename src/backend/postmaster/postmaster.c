@@ -499,10 +499,6 @@ static void checkDataDir(void);
 static void checkPgDir(const char *dir);
 static void checkPgDir2(const char *dir);
 
-#ifdef USE_TEST_UTILS
-static void SimExProcExit(void);
-#endif /* USE_TEST_UTILS */
-
 #ifdef USE_BONJOUR
 static void reg_reply(DNSServiceRegistrationReplyErrorType errorCode,
 		  void *context);
@@ -1928,52 +1924,6 @@ checkIODataDirectory(void)
 	return failure;
 }
 
-#ifdef USE_TEST_UTILS
-/*
- * Simulate an unexpected process exit using SimEx
- */
-static void SimExProcExit()
-{
-	if (gp_simex_init && gp_simex_run && pmState == PM_RUN)
-	{
-		pid_t pid = 0;
-		int sig = 0;
-		const char *procName = NULL;
-		const char *sigName = NULL;
-
-		if (gp_simex_class == SimExESClass_ProcKill)
-		{
-			sig = SIGKILL;
-			sigName = "SIGKILL";
-
-			SimExESSubClass subclass = SimEx_CheckInject();
-			if (subclass == SimExESSubClass_ProcKill_BgWriter)
-			{
-				pid = BgWriterPID;
-				procName = GetServerProcessTitle(pid);
-			}
-			else
-			{
-				Assert(subclass == SimExESSubClass_OK &&
-				       "Unexpected ES subclass for SIGKILL injection");
-			}
-		}
-
-		if (pid != 0)
-		{
-			Assert(sig != 0);
- 			Assert(procName != NULL);
- 			Assert(sigName != NULL);
-
- 			ereport(LOG,
- 					(errmsg_internal("sending %s to %s (%d)", sigName, procName, (int) pid)));
- 			signal_child(pid, sig);
- 		}
- 	}
-}
-#endif /* USE_TEST_UTILS */
-
-
 #ifdef USE_BONJOUR
 
 /*
@@ -2295,10 +2245,6 @@ ServerLoop(void)
             timeout.tv_usec = 0;
         }
 
-#ifdef USE_TEST_UTILS
-        SimExProcExit();
-#endif /* USE_TEST_UTILS */
-
         errno = 0;
         if (acceptNewConnections)
         {
@@ -2343,10 +2289,6 @@ ServerLoop(void)
 			checkPgDir2("pg_multixact/offsets");
 			checkPgDir2("pg_xlog/archive_status");	
 		}
-
-#ifdef USE_TEST_UTILS
-		SimExProcExit();
-#endif /* USE_TEST_UTILS */
 
 		/*
 		 * Block all signals until we wait again.  (This makes it safe for our
@@ -2412,10 +2354,6 @@ ServerLoop(void)
 				}
 			}
 		}
-
-#ifdef USE_TEST_UTILS
-        SimExProcExit();
-#endif /* USE_TEST_UTILS */
 
         if (!FatalError)
         {

@@ -416,7 +416,7 @@ groups:
 {% if "MPP" in test_sections %}
   ## --------------------------------------------------------------------
   - gate_mpp_start
-  # - mpp_interconnect
+  - mpp_interconnect
   - mpp_resource_group_centos6
 {% if "centos7" in os_types %}
   - mpp_resource_group_centos7
@@ -438,7 +438,7 @@ groups:
   # - MM_gpexpand_1
   # - MM_gpexpand_2
   - MM_gpcheck
-  # - MM_gppkg
+  - MM_gppkg
   - MU_check_centos
   - gate_mm_end
 {% endif %}
@@ -474,12 +474,10 @@ groups:
   - cs_[[ test_name ]]
 {% endfor %}
   - storage
-  - mpp_interconnect
   - MM_gprecoverseg
   - MM_gpcheckcat
   - MM_gpexpand_1
   - MM_gpexpand_2
-  - MM_gppkg
   - DPM_gptransfer_43x_to_master
   - DPM_gptransfer
   - DPM_backup-restore

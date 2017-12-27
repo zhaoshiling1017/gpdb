@@ -389,8 +389,8 @@ groups:
 {% endif %}
 {% if "sles" in os_types %}
   - icw_gporca_sles11
-  # - icw_gporca_sles12
-  # - icw_planner_sles12
+  - icw_gporca_sles12
+  - icw_planner_sles12
 {% endif %}
 {% if "ubuntu16" in os_types %}
   - icw_planner_ubuntu16
@@ -466,8 +466,6 @@ groups:
 - name: Red
   jobs:
   - icw_planner_ictcp_centos6
-  - icw_gporca_sles12
-  - icw_planner_sles12
 {% for test_name in cs_walrep_suites +
                     cs_pg_twophase_suites +
                     cs_crash_recovery_suite %}

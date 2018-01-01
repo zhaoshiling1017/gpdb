@@ -378,7 +378,7 @@ groups:
   - icw_gporca_centos6
   - icw_gporca_centos6_gpos_memory
   - icw_planner_centos6
-  # - icw_planner_ictcp_centos6
+  - icw_planner_ictcp_centos6
   - QP_memory-accounting
 {% endif %}
 {% if 'centos6' in os_types or 'ubuntu16' in os_types %}
@@ -409,7 +409,7 @@ groups:
                     cs_crash_recovery_suite %}
   # - cs_[[ test_name ]]
 {% endfor %}
-  # - storage
+  - storage
   - segwalrep_mirrorless_centos6
   - gate_cs_end
 {% endif %}
@@ -430,7 +430,7 @@ groups:
   ## --------------------------------------------------------------------
   - gate_mm_start
   # - MM_gprecoverseg
-  # - MM_gpcheckcat
+  - MM_gpcheckcat
   - MM_analyzedb
   - MM_gpperfmon
   - MM_gpinitsystem
@@ -465,15 +465,12 @@ groups:
 ## ======================================================================
 - name: Red
   jobs:
-  - icw_planner_ictcp_centos6
 {% for test_name in cs_walrep_suites +
                     cs_pg_twophase_suites +
                     cs_crash_recovery_suite %}
   - cs_[[ test_name ]]
 {% endfor %}
-  - storage
   - MM_gprecoverseg
-  - MM_gpcheckcat
   - MM_gpexpand_1
   - MM_gpexpand_2
   - DPM_gptransfer_43x_to_master

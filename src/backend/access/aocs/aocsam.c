@@ -45,7 +45,6 @@
 #include "storage/procarray.h"
 #include "storage/smgr.h"
 #include "utils/datumstream.h"
-#include "utils/debugbreak.h"
 #include "utils/faultinjector.h"
 #include "utils/guc.h"
 #include "utils/inval.h"
@@ -1813,6 +1812,20 @@ aocs_addcol_closefiles(AOCSAddColumnDesc desc)
 	AOCSFileSegInfoAddVpe(desc->rel, desc->cur_segno, desc,
 						  desc->num_newcols, false /* non-empty VPEntry */ );
 }
+
+void
+aocs_addcol_setfirstrownum(AOCSAddColumnDesc desc, int64 firstRowNum)
+{
+       int                     i;
+       for (i = 0; i < desc->num_newcols; ++i)
+       {
+               /*
+                * Next block's first row number.
+                */
+               desc->dsw[i]->blockFirstRowNum = firstRowNum;
+       }
+}
+
 
 /*
  * Force writing new varblock in each segfile open for insert.

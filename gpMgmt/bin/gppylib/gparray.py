@@ -616,12 +616,6 @@ def createSegmentRows( hostlist
                 address = host + '-' + str(interfaceNumber)
             else:
                 address = host
-            fsDict = {}
-            if primary_fs_list != None and len(primary_fs_list) > index:
-                fsDict = primary_fs_list[index]
-            fullFsDict = {}
-            for oid in fsDict:
-                fullFsDict[oid] = "%s/%s%d" % (fsDict[oid], dir_prefix, content)
             rows.append( SegmentRow( content = content
                                    , isprimary = isprimary
                                    , dbid = dbid
@@ -629,7 +623,6 @@ def createSegmentRows( hostlist
                                    , address = address
                                    , port = port
                                    , fulldir = fulldir
-                                   , fileSpaceDictionary = fullFsDict
                                    ) )
             port += 1
             content += 1

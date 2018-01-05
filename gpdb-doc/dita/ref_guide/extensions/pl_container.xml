@@ -805,11 +805,9 @@ $$ LANGUAGE plcontainer;</codeblock></p>
             stored in all the Greenplum Database data directories for all the Greenplum Database
             segment instances: master, standby master, primary and mirror. This query lists the
             Greenplum Database system data
-            directories:<codeblock>select g.hostname, fe.fselocation as directory 
-   from pg_filespace as f, pg_filespace_entry as fe, 
-       gp_segment_configuration as g
-   where f.oid = fe.fsefsoid and g.dbid = fe.fsedbid 
-       and f.fsname = 'pg_system';</codeblock></li>
+            directories:
+	    <codeblock>select g.hostname, datadir from gp_segment_configuration as g;</codeblock>
+	  </li>
           <li>In some cases, when PL/Container is running in a high concurrency environment, the
             Docker daemon hangs with log entries that indicate a memory shortage. This can happen
             even when the system seems to have adequate free memory.<p>The issue seems to be

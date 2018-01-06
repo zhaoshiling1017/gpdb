@@ -45,12 +45,11 @@ EOF
     export IVYREPO_USER="$IVYREPO_USER"
     export IVYREPO_PASSWD="$IVYREPO_PASSWD"
 EOF
-    scp -P $REMOTE_PORT env.sh $REMOTE_USER@$REMOTE_HOST:$GPDB_DIR/env.sh
+    scp -P $REMOTE_PORT -q env.sh $REMOTE_USER@$REMOTE_HOST:$GPDB_DIR/env.sh
 
     # Get git information from local repo(concourse gpdb_src input)
     cd gpdb_src
     GIT_URI=`git config --get remote.origin.url`
-    GIT_BRANCH=`git show -s --pretty=%d HEAD | cut -d / -f 2 | cut -d , -f 1`
     GIT_COMMIT=`git rev-parse HEAD`
     cd ..
 }
@@ -61,11 +60,11 @@ EOF
 function remote_clone() {
     ssh -A -T -p $REMOTE_PORT $REMOTE_USER@$REMOTE_HOST <<- EOF
     cd $GPDB_DIR
-    git clone --recursive -b $GIT_BRANCH $GIT_URI gpdb_src
+    git clone --recursive $GIT_URI gpdb_src
     cd gpdb_src
     git reset --hard $GIT_COMMIT
 EOF
-    scp -P $REMOTE_PORT -r gpaddon_src $REMOTE_USER@$REMOTE_HOST:$GPDB_DIR/
+    scp -P $REMOTE_PORT -qr gpaddon_src $REMOTE_USER@$REMOTE_HOST:$GPDB_DIR/
 }
 
 function remote_compile() {
@@ -76,13 +75,13 @@ function remote_compile() {
     . env.sh
     cd gpdb_src/gpAux
     make sync_tools
-    make GPROOT="$GPDB_DIR" BLD_TARGETS="$BLD_TARGETS" dist
+    make GPROOT="$GPDB_DIR" BLD_TARGETS="$BLD_TARGETS" -s dist
     mv *.zip $GPDB_DIR/
 EOF
 }
 
 function download() {
-    scp -P $REMOTE_PORT $REMOTE_USER@$REMOTE_HOST:$GPDB_DIR/*.zip $ROOT_DIR/gpdb_artifacts/
+    scp -P $REMOTE_PORT -q $REMOTE_USER@$REMOTE_HOST:$GPDB_DIR/*.zip $ROOT_DIR/gpdb_artifacts/
 }
 
 # Since we are cloning and building on remote machine,

@@ -35,9 +35,6 @@ groups:
 - name: all
   jobs:
   ## --------------------------------------------------------------------
-{% if pipeline_type == "prod" %}
-  - validate_pipeline
-{% endif %}
   - gate_compile_start
 {% if "centos6" in os_types %}
   - compile_gpdb_centos6
@@ -497,6 +494,12 @@ resource_types:
 ## ======================================================================
 
 resources:
+{% if ("ICW"    in test_sections and "sles" in os_types) or
+      "CS"      in test_sections or
+      "DPM"     in test_sections or
+      "FileRep" in test_sections or
+      "MPP"     in test_sections or
+      "MM"      in test_sections %}
 - name: ccp_src
   type: git
   source:
@@ -505,6 +508,8 @@ resources:
     uri: {{ccp-git-remote}}
     tag_filter: {{ccp-tag-filter}}
 
+{% if "centos6" in os_types or
+      "ICW"     in test_sections %}
 - name: terraform
   type: terraform
   source:
@@ -518,21 +523,10 @@ resources:
       # This is not parameterized, on purpose. All tfstates will go to this spot,
       # and different teams will place there clusters' tfstate files under different paths
       bucket: gpdb5-pipeline-dynamic-terraform
-      ###########################################################
-      # Two conventions are allowed for bucket_path:            #
-      # 1) Cluster are expected to be destroyed automatically   #
-      #    Toolsmiths will reap old and orphaned clusters       #
-      #                                                         #
-      #      bucket_path: prod/[Pipeline Name]/                 #
-      #                                                         #
-      # 2) Long lived clusters for development.                 #
-      #    The team that creates it is responsible for cluster  #
-      #                                                         #
-      #     bucket_path: dev/[Team Name]/                       #
-      #                                                         #
-      ###########################################################
-      bucket_path: {{tf-bucket-path}}
+      bucket_path: clusters/
 
+{% endif %}
+{% endif %}
 {% if "DPM" in test_sections %}
 - name: terraform2
   type: terraform
@@ -545,7 +539,7 @@ resources:
       secret_access_key: {{tf-machine-secret-access-key}}
       region_name: {{aws-region}}
       bucket: gpdb5-pipeline-dynamic-terraform
-      bucket_path: {{tf-bucket-path}}
+      bucket_path: clusters/
 
 {% endif %}
 {% if "aix7" in os_types %}
@@ -612,7 +606,7 @@ resources:
     uri: ((debian-release-git-remote))
 
 {% endif %}
-{% if "centos6" in os_types or "aix7" in os_types %}
+{% if "centos6" in os_types or "sles" in os_types or "aix7" in os_types %}
 - name: centos-gpdb-dev-6
   type: docker-image
   source:
@@ -855,7 +849,7 @@ ccp_gen_cluster_default_params_anchor: &ccp_gen_cluster_default_params
   AWS_ACCESS_KEY_ID: {{tf-machine-access-key-id}}
   AWS_SECRET_ACCESS_KEY: {{tf-machine-secret-access-key}}
   AWS_DEFAULT_REGION: {{aws-region}}
-  BUCKET_PATH: {{tf-bucket-path}}
+  BUCKET_PATH: clusters/
   BUCKET_NAME: {{tf-bucket-name}}
 
 set_failed_anchor: &set_failed
@@ -878,7 +872,7 @@ set_failed_anchor: &set_failed
         AWS_ACCESS_KEY_ID: {{tf-machine-access-key-id}}
         AWS_SECRET_ACCESS_KEY: {{tf-machine-secret-access-key}}
         AWS_DEFAULT_REGION: {{tf-machine-region}}
-        BUCKET_PATH: {{tf-bucket-path}}
+        BUCKET_PATH: clusters/
         BUCKET_NAME: {{tf-bucket-name}}
 
 set_failed_anchor_2: &set_failed_2_cluster
@@ -902,9 +896,8 @@ set_failed_anchor_2: &set_failed_2_cluster
         AWS_ACCESS_KEY_ID: {{tf-machine-access-key-id}}
         AWS_SECRET_ACCESS_KEY: {{tf-machine-secret-access-key}}
         AWS_DEFAULT_REGION: {{tf-machine-region}}
-        BUCKET_PATH: {{tf-bucket-path}}
+        BUCKET_PATH: clusters/
         BUCKET_NAME: {{tf-bucket-name}}
-
 pulse_properties_anchor: &pulse_properties
   PULSE_URL: {{pulse_url}}
   PULSE_USERNAME: {{pulse_username}}
@@ -976,19 +969,7 @@ cs_ccp_run_tests_params_anchor: &cs_ccp_run_tests_params
 ## ======================================================================
 
 jobs:
-{% if pipeline_type == "prod" %}
 
-- name: validate_pipeline
-  plan:
-  - aggregate:
-    - get: gpdb_src
-      trigger: true
-    - get: centos-gpdb-dev-6
-  - task: validate_pipeline
-    file: gpdb_src/concourse/tasks/validate_pipeline.yml
-    image: centos-gpdb-dev-6
-
-{% endif %}
 ## ======================================================================
 ##   ____                      _ _
 ##  / ___|___  _ __ ___  _ __ (_) | ___
@@ -3132,5 +3113,4 @@ jobs:
     - DPM_gptransfer_43x_to_master
     - DPM_gptransfer
     - mpp_interconnect
-    - validate_pipeline
 {% endif %}

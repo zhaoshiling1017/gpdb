@@ -1,11 +1,7 @@
 ## ======================================================================
 {% set cs_walrep_suites = ['walrep_1',
                            'walrep_2'] %}
-{% set cs_pg_twophase_suites = ['pg_twophase_01_10',
-                                'pg_twophase_11_20',
-                                'pg_twophase_21_30',
-                                'pg_twophase_31_40',
-                                'pg_twophase_41_49',
+{% set cs_pg_twophase_suites = ['pg_twophase',
                                 'switch_01_12'] %}
 {% set cs_crash_recovery_suite = ['crash_recovery_schema_topology'] %}
 

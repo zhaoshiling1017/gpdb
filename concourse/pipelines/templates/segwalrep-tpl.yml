@@ -1,8 +1,7 @@
 ## ======================================================================
 {% set cs_walrep_suites = ['walrep_1',
                            'walrep_2'] %}
-{% set cs_pg_twophase_suites = ['pg_twophase',
-                                'switch_01_12'] %}
+{% set cs_pg_twophase_suites = ['pg_twophase'] %}
 {% set cs_crash_recovery_suite = ['crash_recovery_schema_topology'] %}
 
 {% set cs_filerep_end_to_end_suites = ['filerep_end_to_end_full_mirror',

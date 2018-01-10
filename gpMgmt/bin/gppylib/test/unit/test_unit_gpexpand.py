@@ -3,7 +3,7 @@ import imp
 
 from gp_unittest import *
 from mock import *
-from gparray import GpDB, GpArray
+from gparray import Segment, GpArray
 from gppylib.db.dbconn import DbURL
 from gppylib.db import catalog
 from gppylib.gplog import *
@@ -107,15 +107,15 @@ class GpExpand(GpTestCase):
                                                                   "segments defined \n\nExiting...")
 
     def createGpArrayWith2Primary2Mirrors(self):
-        self.master = GpDB.initFromString(
+        self.master = Segment.initFromString(
             "1|-1|p|p|s|u|mdw|mdw|5432|/data/master")
-        self.primary0 = GpDB.initFromString(
+        self.primary0 = Segment.initFromString(
             "2|0|p|p|s|u|aspen|sdw1|40000|/Users/pivotal/workspace/gpdb/gpAux/gpdemo/datadirs/qddir/demoDataDir-1")
-        self.primary1 = GpDB.initFromString(
+        self.primary1 = Segment.initFromString(
             "3|1|p|p|s|u|sdw2|sdw2|40001|/data/primary1")
-        self.mirror0 = GpDB.initFromString(
+        self.mirror0 = Segment.initFromString(
             "4|0|m|m|s|u|sdw2|sdw2|50000|/data/mirror0")
-        self.mirror1 = GpDB.initFromString(
+        self.mirror1 = Segment.initFromString(
             "5|1|m|m|s|u|sdw1|sdw1|50001|/data/mirror1")
         return GpArray([self.master, self.primary0, self.primary1, self.mirror0, self.mirror1])
 

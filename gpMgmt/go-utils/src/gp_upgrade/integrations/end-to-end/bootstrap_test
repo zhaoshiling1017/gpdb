@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# bootstrap_test is characterized by the fact that it doesn't need a GPDB cluster up
+
+set -eox pipefail
+
+source /usr/local/greenplum-db-devel/greenplum_path.sh
+
+# maybe we need to cp into a new-bindir="$(dirname $GPHOME)/gpdb-new"
+# but maybe that needs to be done not by gpadmin user
+
+gp_upgrade prepare start-hub
+gp_upgrade status upgrade | grep "PENDING - Configuration Check"
+gp_upgrade check config
+gp_upgrade status upgrade | grep "COMPLETE - Configuration Check"
+
+gp_upgrade status upgrade | grep "PENDING - Install binaries on segments"
+gp_upgrade check seginstall
+sleep 2
+gp_upgrade status upgrade | grep "FAILED - Install binaries on segments"
+
+#TODO: scp the new-bindir to sdw1 etc. as though to do a seginstall
+
+gp_upgrade check seginstall
+sleep 2
+gp_upgrade status upgrade | grep "COMPLETE - Install binaries on segments"

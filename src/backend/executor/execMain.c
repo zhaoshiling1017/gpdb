@@ -1930,13 +1930,13 @@ InitPlan(QueryDesc *queryDesc, int eflags)
 	 */
 	planstate = ExecInitNode(start_plan_node, estate, eflags);
 
-	/* GPDB hook for collecting query info */
-	if (query_info_collect_hook)
-		(*query_info_collect_hook)(METRICS_PLAN_NODE_INITIALIZE, queryDesc);
-
 	queryDesc->planstate = planstate;
 
 	Assert(queryDesc->planstate);
+
+	/* GPDB hook for collecting query info */
+	if (query_info_collect_hook)
+		(*query_info_collect_hook)(METRICS_PLAN_NODE_INITIALIZE, queryDesc);
 
 	if (RootSliceIndex(estate) != LocallyExecutingSliceIndex(estate))
 		return;

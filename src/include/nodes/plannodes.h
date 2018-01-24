@@ -186,7 +186,6 @@ typedef struct Plan
 
 	/* Plan node id */
 	int			plan_node_id;	/* unique across entire final plan tree */
-	int			plan_parent_node_id;
 
 	/*
 	 * estimated execution costs for plan (see costsize.c for more info)

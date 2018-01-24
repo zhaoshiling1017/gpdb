@@ -60,6 +60,11 @@ InstrAlloc(int n, int instrument_options)
 }
 
 /* Entry to a plan node */
+/*
+ * GPDB Note: Macro INSTR_START_NODE replaces InstrStartNode in ExecProcNode for
+ * performance benefits, other files keep using InstrStartNode. Pay attention
+ * to keep InstrStartNode/INSTR_START_NODE synchronized when modifying this function.
+ */
 void
 InstrStartNode(Instrumentation *instr)
 {
@@ -70,6 +75,11 @@ InstrStartNode(Instrumentation *instr)
 }
 
 /* Exit from a plan node */
+/*
+ * GPDB Note: Macro INSTR_STOP_NODE replaces InstrStopNode in ExecProcNode for
+ * performance benefits, other files keep using InstrStopNode. Pay attention
+ * to keep InstrStopNode/INSTR_STOP_NODE synchronized when modifying this function.
+ */
 void
 InstrStopNode(Instrumentation *instr, uint64 nTuples)
 {
@@ -131,7 +141,7 @@ InstrEndLoop(Instrumentation *instr)
 	instr->tuplecount = 0;
 }
 
-/* Calcutlate number slots from gp_instrument_shmem_size */
+/* Calculate number slots from gp_instrument_shmem_size */
 Size
 InstrShmemNumSlots(void)
 {

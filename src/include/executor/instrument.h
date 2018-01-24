@@ -69,7 +69,9 @@ extern void InstrStopNode(Instrumentation *instr, uint64 nTuples);
 extern void InstrEndLoop(Instrumentation *instr);
 
 /*
- * INSTR_START_NODE improves about 1% performance over InstrStartNode etc.
+ * GPDB Note: Macro INSTR_START_NODE replaces InstrStartNode in ExecProcNode for
+ * performance benefits, other files keep using InstrStartNode. Pay attention
+ * to keep InstrStartNode/INSTR_START_NODE synchronized when modifying this macro.
  */
 #define INSTR_START_NODE(instr) do {											\
 	if ((instr)->need_timer) {													\
@@ -80,6 +82,11 @@ extern void InstrEndLoop(Instrumentation *instr);
 	}																			\
 } while(0)
 
+/*
+ * GPDB Note: Macro INSTR_STOP_NODE replaces InstrStopNode in ExecProcNode for
+ * performance benefits, other files keep using InstrStopNode. Pay attention
+ * to keep InstrStopNode/INSTR_STOP_NODE synchronized when modifying this macro.
+ */
 #define INSTR_STOP_NODE(instr, nTuples) do {									\
 	(instr)->tuplecount += (nTuples);											\
 	if ((instr)->need_timer)													\
